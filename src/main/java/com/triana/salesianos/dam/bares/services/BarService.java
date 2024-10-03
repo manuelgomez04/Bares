@@ -1,6 +1,7 @@
 package com.triana.salesianos.dam.bares.services;
 
 import com.triana.salesianos.dam.bares.models.Bar;
+import com.triana.salesianos.dam.bares.models.Tags;
 import com.triana.salesianos.dam.bares.repositories.BarRepository;
 import com.triana.salesianos.dam.bares.repositories.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,9 +51,26 @@ public class BarService {
         return barRepository.save(bar);
     }
 
-    public Bar addTag(Long id, Long idTag) {
+    public Bar anadirTag(Long id, Long idTag) {
         Bar bar = barRepository.findById(id).orElse(null);
-        bar.getListaTags().add(tagRepository.findById(idTag).orElse(null));
+        Tags nuevo_tag = tagRepository.findById(idTag).orElse(null);
+
+        if (nuevo_tag == null) {
+            return null;
+        } else
+            bar.getListaTags().add(tagRepository.findById(idTag).orElse(null));
+        return barRepository.save(bar);
+
+    }
+
+    public Bar borrarTag(Long id, Long idTag){
+        Bar bar = barRepository.findById(id).orElse(null);
+        Tags tag = tagRepository.findById(idTag).orElse(null);
+
+        if(tag == null || bar.getListaTags().stream().allMatch(t -> t.getIdTag() != idTag)){
+            return null;
+        }else
+            bar.getListaTags().remove(tag);
         return barRepository.save(bar);
     }
 }
